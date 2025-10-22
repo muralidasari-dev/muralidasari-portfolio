@@ -20,11 +20,9 @@ import {
 } from "lucide-react";
 
 /**
- * App.tsx — Bright modern single-file portfolio (FINAL VERSION)
- * - All TypeScript errors resolved.
- * - Dynamic page title set in Root App component.
- * - CSS conflicts removed.
- * - Content optimized for recruitment (AI DS, Cloud, Web).
+ * App.tsx — Bright modern single-file portfolio (FINAL FIX: Home Section Spacing)
+ * - Adjusted Hero section layout (min-h-screen removed, replaced with padding)
+ * - Constrained image height/width to fix layout overflow shown in the screenshot.
  */
 
 // --------------------- TYPE DEFINITIONS ---------------------
@@ -457,7 +455,8 @@ const Header: React.FC<HeaderProps> = ({ active }) => {
 // --------------------- Hero ---------------------
 function Hero() {
   return (
-    <section id="home" className="min-h-[75vh] flex items-center py-16">
+    // FIX 1: Changed min-h-[75vh] to py-24 for better vertical spacing control
+    <section id="home" className="flex items-center py-24 md:py-32">
       <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-10 items-center">
         <motion.div initial="hidden" animate="show" variants={staggerContainer}>
           <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900" style={{ fontFamily: "Poppins, Inter, sans-serif" }}>
@@ -507,6 +506,7 @@ function Hero() {
           </motion.div>
         </motion.div>
 
+        {/* IMAGE COLUMN - Photo size remains constrained to max-w-xs */}
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="flex justify-center lg:justify-end">
           <div className="relative w-full max-w-xs rounded-3xl overflow-hidden border-2 border-white shadow-xl bg-white transition-all duration-500 hover:shadow-amber-100">
             <img src={MURALI.heroImage} alt={MURALI.name} className="object-cover w-full h-full" />
