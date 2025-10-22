@@ -20,10 +20,11 @@ import {
 } from "lucide-react";
 
 /**
- * App.tsx — Bright modern single-file portfolio (FINAL FIX: CSS Conflicts Resolved)
- * - All TypeScript errors resolved in the previous step.
- * - Remaining Tailwind CSS text color conflicts (text-gray-900 vs. text-amber-600) are fixed
- * by removing the redundant class, ensuring a clean compiler output.
+ * App.tsx — Bright modern single-file portfolio (FINAL VERSION)
+ * - All TypeScript errors resolved.
+ * - Dynamic page title set in Root App component.
+ * - CSS conflicts removed.
+ * - Content optimized for recruitment (AI DS, Cloud, Web).
  */
 
 // --------------------- TYPE DEFINITIONS ---------------------
@@ -612,7 +613,7 @@ function Expertise() {
                     {IconComponent && <IconComponent className="w-7 h-7" />}
                   </div>
                   <div>
-                    {/* FIX: Removed conflicting 'text-gray-900' from this heading tag. */}
+                    {/* FIX: This heading has the necessary classes to remain black text-gray-900 */}
                     <h4 className="text-2xl font-bold text-gray-900">{e.title}</h4> 
                   </div>
                 </div>
@@ -988,6 +989,13 @@ export default function App() {
   const sectionIds = ["home", "about", "expertise", "skills", "projects", "academic", "contact"];
 
   useEffect(() => {
+    // FIX for the "React App" title: Set the document title dynamically
+    document.title = `${MURALI.name} | ${MURALI.title}`;
+    
+    document.documentElement.style.fontFamily = "Inter, Poppins, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue'";
+  }, []);
+
+  useEffect(() => {
     const onScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
@@ -1011,10 +1019,6 @@ export default function App() {
     window.addEventListener("scroll", onScroll);
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.style.fontFamily = "Inter, Poppins, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue'";
   }, []);
 
   return (
