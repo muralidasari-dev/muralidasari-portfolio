@@ -20,9 +20,9 @@ import {
 } from "lucide-react";
 
 /**
- * App.tsx — Bright modern single-file portfolio (FINAL FIX: Home Section Spacing)
- * - Adjusted Hero section layout (min-h-screen removed, replaced with padding)
- * - Constrained image height/width to fix layout overflow shown in the screenshot.
+ * App.tsx — Bright modern single-file portfolio (FINAL FIX: Functional Contact Form & Layout)
+ * - Implements actual email submission using Formspree (ID: xvgwjrzg).
+ * - Incorporates final layout/spacing fixes for the Hero section.
  */
 
 // --------------------- TYPE DEFINITIONS ---------------------
@@ -455,7 +455,7 @@ const Header: React.FC<HeaderProps> = ({ active }) => {
 // --------------------- Hero ---------------------
 function Hero() {
   return (
-    // FIX 1: Changed min-h-[75vh] to py-24 for better vertical spacing control
+    // FIX 1: Removed min-h-[75vh] and adjusted vertical padding for better density
     <section id="home" className="flex items-center py-24 md:py-32">
       <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-10 items-center">
         <motion.div initial="hidden" animate="show" variants={staggerContainer}>
@@ -506,9 +506,10 @@ function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* IMAGE COLUMN - Photo size remains constrained to max-w-xs */}
+        {/* IMAGE COLUMN - Constrained photo size to prevent layout stretching */}
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="flex justify-center lg:justify-end">
-          <div className="relative w-full max-w-xs rounded-3xl overflow-hidden border-2 border-white shadow-xl bg-white transition-all duration-500 hover:shadow-amber-100">
+          {/* FIX 2: Added explicit height and width limits for the photo wrapper on large screens */}
+          <div className="relative w-full max-w-xs lg:max-w-sm lg:h-[500px] rounded-3xl overflow-hidden border-2 border-white shadow-xl bg-white transition-all duration-500 hover:shadow-amber-100">
             <img src={MURALI.heroImage} alt={MURALI.name} className="object-cover w-full h-full" />
             <div className="absolute bottom-4 left-4 bg-amber-500/90 px-3 py-1 rounded-full text-white font-medium text-sm shadow-md">
               {MURALI.availability}
@@ -841,23 +842,49 @@ interface ContactFormState {
   message: string;
 }
 
+// Formspree ID for submission
+const FORMSPREE_ID = "xvgwjrzg";
+const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
+
 function Contact() {
   const [form, setForm] = useState<ContactFormState>({ name: "", email: "", message: "" });
-  const [status, setStatus] = useState<'sending' | 'sent' | null>(null); 
+  const [status, setStatus] = useState<'sending' | 'sent' | 'error' | null>(null); 
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
-    setTimeout(() => {
-      setStatus("sent");
-      setForm({ name: "", email: "", message: "" });
-      setTimeout(() => setStatus(null), 3000);
-    }, 900);
+
+    try {
+        const response = await fetch(FORMSPREE_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(form),
+        });
+
+        if (response.ok) {
+            setStatus("sent");
+            setForm({ name: "", email: "", message: "" });
+        } else {
+            // Handle HTTP errors
+            setStatus("error");
+            console.error("Formspree submission failed with status:", response.status);
+        }
+    } catch (error) {
+        // Handle network errors
+        setStatus("error");
+        console.error("Network error during form submission:", error);
+    } finally {
+        // Clear status after a delay
+        setTimeout(() => setStatus(null), 4000);
+    }
   };
 
   return (
@@ -912,7 +939,8 @@ function Contact() {
 
                 <div>
                   <label className="block text-sm text-gray-700 font-medium mb-1">Email</label>
-                  <input name="email" value={form.email} onChange={onChange} required type="email" className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition" />
+                  {/* The name attribute should be _replyto for formspree to use it as the reply address */}
+                  <input name="_replyto" value={form.email} onChange={onChange} required type="email" className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition" />
                 </div>
 
                 <div>
@@ -922,11 +950,12 @@ function Contact() {
             </div>
 
             <div className="flex items-center gap-4 mt-6">
-              <button type="submit" disabled={status === "sending" || status === "sent"} className={`inline-flex items-center gap-3 px-6 py-3 rounded-lg text-white font-bold transition duration-300 ${status === "sending" ? "bg-amber-400 opacity-70" : status === "sent" ? "bg-green-500" : "bg-amber-500 hover:bg-amber-600 shadow-md"}`}>
-                {status === "sending" ? "Sending..." : status === "sent" ? "Sent Successfully! 🎉" : "Send Message"}
+              <button type="submit" disabled={status === "sending" || status === "sent"} className={`inline-flex items-center gap-3 px-6 py-3 rounded-lg text-white font-bold transition duration-300 ${status === "sending" ? "bg-amber-400 opacity-70" : status === "sent" ? "bg-green-500" : status === "error" ? "bg-red-500" : "bg-amber-500 hover:bg-amber-600 shadow-md"}`}>
+                {status === "sending" ? "Sending..." : status === "sent" ? "Sent Successfully! 🎉" : status === "error" ? "Error! Try Again." : "Send Message"}
                 {status !== "sent" && <Zap className="w-4 h-4" />}
               </button>
-              {status === "sent" && <span className="text-sm text-green-600 font-semibold">I'll be in touch shortly!</span>}
+              {status === "sent" && <span className="text-sm text-green-600 font-semibold">Message sent — thank you!</span>}
+              {status === "error" && <span className="text-sm text-red-600 font-semibold">Failed to send. Please use the direct email link.</span>}
             </div>
           </form>
         </div>
