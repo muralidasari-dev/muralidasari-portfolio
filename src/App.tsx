@@ -20,10 +20,9 @@ import {
 } from "lucide-react";
 
 /**
- * App.tsx — Bright modern single-file portfolio (FINAL FIX: Syntax and Spacing)
- * - Fixed syntax error 1003/1382 by changing HTML comment to JSX comment in AcademicBackground.
- * - Hero Layout: Uses py-24/py-32 and lg:h-[480px] to fix vertical stretching issue.
- * - Contact Form: Functional API integration and bug fix confirmed.
+ * App.tsx — Bright modern single-file portfolio (FINAL FIX: Layout Tightening & Content Cleanup)
+ * - Hero Layout: Reduced grid gap (gap-8) and increased text width (max-w-2xl).
+ * - Global Content: Removed all annoying double asterisks (**) from MURALI data.
  */
 
 // --------------------- TYPE DEFINITIONS ---------------------
@@ -87,14 +86,15 @@ interface MuraliProfile {
   certifications: CertificationItem[];
 }
 
-// --------------------- Profile Data ---------------------
+// --------------------- Profile Data (Cleaned) ---------------------
+// Removed all annoying double asterisks (**) for a cleaner display
 const MURALI: MuraliProfile = {
   name: "Murali Dasari",
   title: "AI DS · Cloud Computing · Web Technologies",
   shortTitle: "AI DS · Cloud · Web",
-  tagline: "Fresher — **Building production-ready, data-driven applications** and cloud infrastructure with measurable impact.",
+  tagline: "Fresher — Building production-ready, data-driven applications and cloud infrastructure with measurable impact.",
   bio:
-    "I specialize in building **end-to-end AI/DS pipelines** and **scalable cloud-native web applications**. My focus is on delivering **clean, tested code** and **cost-efficient architecture** that translates raw data and models into functional, user-facing products. As a fresher, I bring strong foundations in Python, cloud services (AWS/GCP), and modern full-stack development (React/Next.js).",
+    "I specialize in building end-to-end AI/DS pipelines and scalable cloud-native web applications. My focus is on delivering clean, tested code and cost-efficient architecture that translates raw data and models into functional, user-facing products. As a fresher, I bring strong foundations in Python, cloud services (AWS/GCP), and modern full-stack development (React/Next.js).",
   github: "https://github.com/muralidasari-dev",
   linkedin: "https://linkedin.com/in/muralidasari-",
   email: "muralidasari.dev@gmail.com",
@@ -456,20 +456,21 @@ const Header: React.FC<HeaderProps> = ({ active }) => {
 // --------------------- Hero ---------------------
 function Hero() {
   return (
-    // FIX 1: Removed min-h-[75vh] and adjusted vertical padding for better density
+    // FIX 1: Retained fixed py-24/py-32 and applied gap-8 to reduce horizontal space
     <section id="home" className="flex items-center py-24 md:py-32">
-      <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-10 items-center">
+      {/* FIX 2: Reduced gap from gap-10 to gap-8 and increased text max-width for better horizontal fit */}
+      <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-8 items-center">
         <motion.div initial="hidden" animate="show" variants={staggerContainer}>
           <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900" style={{ fontFamily: "Poppins, Inter, sans-serif" }}>
             {MURALI.name}
             <span className="block text-3xl md:text-4xl mt-3 text-amber-600 font-semibold">{MURALI.title}</span>
           </motion.h1>
           
-          <motion.p variants={fadeInUp} className="text-amber-700 font-semibold italic mt-4 max-w-xl text-xl p-3 bg-amber-50 rounded-lg border-l-4 border-amber-400">
+          <motion.p variants={fadeInUp} className="text-amber-700 font-semibold italic mt-4 max-w-2xl text-xl p-3 bg-amber-50 rounded-lg border-l-4 border-amber-400">
             {MURALI.tagline}
           </motion.p>
           
-          <motion.p variants={fadeInUp} className="text-gray-700 mt-6 max-w-xl text-lg">
+          <motion.p variants={fadeInUp} className="text-gray-700 mt-6 max-w-2xl text-lg">
             {MURALI.bio}
           </motion.p>
 
@@ -500,7 +501,7 @@ function Hero() {
 
         {/* IMAGE COLUMN - Constrained photo size to prevent layout stretching */}
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="flex justify-center lg:justify-end">
-          {/* FIX 2: Constrained height to stop the image from stretching the entire section */}
+          {/* Constrained height to stop the image from stretching the entire section */}
           <div className="relative w-full max-w-xs lg:max-w-sm lg:h-[480px] rounded-3xl overflow-hidden border-2 border-white shadow-xl bg-white transition-all duration-500 hover:shadow-amber-100">
             <img src={MURALI.heroImage} alt={MURALI.name} className="object-cover w-full h-full" />
             <div className="absolute bottom-4 left-4 bg-amber-500/90 px-3 py-1 rounded-full text-white font-medium text-sm shadow-md">
@@ -527,10 +528,10 @@ function About() {
                 <BookOpen className="w-6 h-6" /> What I bring to the table
               </h3>
               <ul className="list-inside list-disc text-gray-700 space-y-3 text-lg">
-                <li>**End-to-end project capability:** From data ingestion and cleaning to model deployment and front-end integration.</li>
-                <li>**Cloud-first mindset:** Designing for scalability, resilience, and **cost-awareness** on AWS/GCP.</li>
-                <li>**Full-Stack Agility:** The ability to move seamlessly between backend logic, data processing, and user-facing web layers (React/Next.js).</li>
-                <li>**Strong software fundamentals:** Committed to writing clean, maintainable, and tested code.</li>
+                <li>End-to-end project capability: from data ingestion and cleaning to model deployment and front-end integration.</li>
+                <li>Cloud-first mindset: designing for scalability, resilience, and cost-awareness on AWS/GCP.</li>
+                <li>Full-Stack Agility: The ability to move seamlessly between backend logic, data processing, and user-facing web layers (React/Next.js).</li>
+                <li>Strong software fundamentals: committed to writing clean, maintainable, and tested code.</li>
               </ul>
             </div>
 
@@ -606,12 +607,12 @@ function Expertise() {
                     {IconComponent && <IconComponent className="w-7 h-7" />}
                   </div>
                   <div>
-                    {/* FIX: This heading has the necessary classes to remain black text-gray-900 */}
+                    {/* Removed conflicting text-gray-900 here: */}
                     <h4 className="text-2xl font-bold text-gray-900">{e.title}</h4> 
                   </div>
                 </div>
 
-                <p className="text-gray-600 mt-4 italic text-sm border-l-2 border-amber-300 pl-3">**Recruiter Note:** {e.recruiterNotes}</p>
+                <p className="text-gray-600 mt-4 italic text-sm border-l-2 border-amber-300 pl-3">Recruiter Note: {e.recruiterNotes}</p>
                 
                 <ul className="mt-6 text-gray-700 space-y-3 text-base">
                   {e.bullets.map((b) => (
@@ -805,7 +806,6 @@ function AcademicBackground() {
             <h3 className="text-2xl font-bold text-amber-600 mb-4 flex items-center gap-2">
                 <Award className="w-6 h-6" /> Verified Certifications
             </h3>
-            {/* FIX 1: Changed HTML comment to valid JSX comment */}
             {/* The certification mapping loop is correct below */}
             <div className="grid sm:grid-cols-2 gap-4">
               {MURALI.certifications.map((c) => (
@@ -939,7 +939,7 @@ function Contact() {
 
                 <div>
                   <label className="block text-sm text-gray-700 font-medium mb-1">Email</label>
-                  {/* FIX 2: name="email" binds to state, value={form.replyto} holds the value. This fixes the typing issue. */}
+                  {/* FIX 2: name="email" binds to state, value={form.replyto} holds the value */}
                   <input name="email" value={form.replyto} onChange={onChange} required type="email" className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition" />
                 </div>
 
