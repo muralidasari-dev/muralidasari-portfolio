@@ -20,13 +20,12 @@ import {
 } from "lucide-react";
 
 /**
- * App.tsx — Bright modern single-file portfolio (FINAL DEFINITIVE VERSION)
+ * App.tsx — Modern Portfolio Landing Page (Final Definitive Version)
  * * ALL FIXES APPLIED:
- * 1. Syntax Fix: Changed HTML comment to JSX comment to resolve TS errors 1003/1382.
- * 2. Image Path: Set to local asset /murali_hero.jpg for reliable global Vercel CDN hosting.
- * 3. Layout: Uses py-24/py-32 and lg:h-[480px] to fix vertical stretching.
- * 4. Content Cleanup: Removed all markdown ** asterisks for clean display.
- * 5. Contact Form: Fully functional using Formspree ID: xvgwjrzg.
+ * 1. Text Alignment: Applied text-justify to the main bio for a clean, squared edge against the image.
+ * 2. Layout: Uses lg:grid-cols-[3fr_2fr] (60/40 split) and gap-4 for optimal spacing.
+ * 3. Title Fix: Reverted title font sizing to prevent text overlapping the image.
+ * 4. Contact Form: Fully functional using Formspree ID: xvgwjrzg.
  */
 
 // --------------------- TYPE DEFINITIONS ---------------------
@@ -90,19 +89,18 @@ interface MuraliProfile {
   certifications: CertificationItem[];
 }
 
-// --------------------- Profile Data (Image Path Updated) ---------------------
+// --------------------- Profile Data (Content Finalized) ---------------------
 const MURALI: MuraliProfile = {
   name: "Murali Dasari",
-  title: "AI DS · Cloud Computing · Web Technologies",
+  title: "AI DS · Cloud Computing · Web Technologies", 
   shortTitle: "AI DS · Cloud · Web",
   tagline: "Fresher — Building production-ready, data-driven applications and cloud infrastructure with measurable impact.",
   bio:
-    "I specialize in building end-to-end AI/DS pipelines and scalable cloud-native web applications. My focus is on delivering clean, tested code and cost-efficient architecture that translates raw data and models into functional, user-facing products. As a fresher, I bring strong foundations in Python, cloud services (AWS/GCP), and modern full-stack development (React/Next.js).",
+    "I specialize in building high-performance, end-to-end AI/Data Science pipelines and scalable cloud-native web applications. My focus is on delivering clean, rigorously tested code and cost-efficient architecture that effectively translates raw data and models into robust, user-facing software products. As a dedicated fresher, I bring strong foundations in Python, deep expertise in cloud services (AWS/GCP), and modern full-stack development (React/Next.js) ready to contribute measurable value immediately.",
   github: "https://github.com/muralidasari-dev",
   linkedin: "https://linkedin.com/in/muralidasari-",
   email: "muralidasari.dev@gmail.com",
   resume: "/Murali_Dasari_Resume.pdf",
-  // FIX: Using relative path for global Vercel CDN hosting
   heroImage: "/murali_hero.jpg", 
   location: "India",
   availability: "Open to work · Intern / Entry-level roles",
@@ -460,23 +458,24 @@ const Header: React.FC<HeaderProps> = ({ active }) => {
 // --------------------- Hero ---------------------
 function Hero() {
   return (
-    // FIX 1: Retained fixed py-24/py-32 and applied gap-8 to reduce horizontal space
-    <section id="home" className="flex items-center py-24 md:py-32">
-      {/* FIX 2: Reduced gap from gap-10 to gap-8 and increased text max-width for better horizontal fit */}
-      <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-8 items-center">
+    // FIX 1: Reduced vertical padding slightly for more density
+    <section id="home" className="flex items-center py-20 md:py-24">
+      {/* FIX 2: Reduced gap to gap-4 for tighter grouping. Applied 60/40 custom grid. */}
+      <div className="container mx-auto px-6 grid lg:grid-cols-[3fr_2fr] gap-4 items-center">
         <motion.div initial="hidden" animate="show" variants={staggerContainer}>
           <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900" style={{ fontFamily: "Poppins, Inter, sans-serif" }}>
             {MURALI.name}
+            {/* FIX 3: Reverted font size to md:text-4xl and removed whitespace-nowrap entirely to allow natural wrapping, preventing overlap. */}
             <span className="block text-3xl md:text-4xl mt-3 text-amber-600 font-semibold">{MURALI.title}</span>
           </motion.h1>
           
-          {/* Increased max-w to 2xl */}
-          <motion.p variants={fadeInUp} className="text-amber-700 font-semibold italic mt-4 max-w-2xl text-xl p-3 bg-amber-50 rounded-lg border-l-4 border-amber-400">
+          {/* Text fields now fill 100% of the allocated 60% grid column */}
+          <motion.p variants={fadeInUp} className="text-amber-700 font-semibold italic mt-4 text-xl p-3 bg-amber-50 rounded-lg border-l-4 border-amber-400">
             {MURALI.tagline}
           </motion.p>
           
-          {/* Increased max-w to 2xl */}
-          <motion.p variants={fadeInUp} className="text-gray-700 mt-6 max-w-2xl text-lg">
+          {/* FIX 5: Applied text-justify to the main bio text */}
+          <motion.p variants={fadeInUp} className="text-gray-700 mt-6 text-lg text-justify">
             {MURALI.bio}
           </motion.p>
 
@@ -505,10 +504,10 @@ function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* IMAGE COLUMN - Constrained photo size to prevent layout stretching */}
+        {/* IMAGE COLUMN (40% width) */}
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="flex justify-center lg:justify-end">
           {/* Constrained height to stop the image from stretching the entire section */}
-          <div className="relative w-full max-w-xs lg:max-w-sm lg:h-[480px] rounded-3xl overflow-hidden border-2 border-white shadow-xl bg-white transition-all duration-500 hover:shadow-amber-100">
+          <div className="relative w-full max-w-xs lg:max-w-md lg:h-[480px] rounded-3xl overflow-hidden border-2 border-white shadow-xl bg-white transition-all duration-500 hover:shadow-amber-100">
             <img src={MURALI.heroImage} alt={MURALI.name} className="object-cover w-full h-full" />
             <div className="absolute bottom-4 left-4 bg-amber-500/90 px-3 py-1 rounded-full text-white font-medium text-sm shadow-md">
               {MURALI.availability}
@@ -811,7 +810,6 @@ function AcademicBackground() {
             <h3 className="text-2xl font-bold text-amber-600 mb-4 flex items-center gap-2">
                 <Award className="w-6 h-6" /> Verified Certifications
             </h3>
-            {/* FIX 1: Changed HTML comment to valid JSX comment */}
             {/* The certification mapping loop is correct below */}
             <div className="grid sm:grid-cols-2 gap-4">
               {MURALI.certifications.map((c) => (
