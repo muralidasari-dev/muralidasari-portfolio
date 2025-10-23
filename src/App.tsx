@@ -22,10 +22,10 @@ import {
 /**
  * App.tsx — Bright modern single-file portfolio (FINAL DEFINITIVE VERSION)
  * * ALL FIXES APPLIED:
- * 1. Layout Fix: Reduced gap, increased text width (max-w-3xl) to fill horizontal space.
- * 2. Title Fix: Increased font size for title span (md:text-5xl) to prevent wrapping ("Web Technologies").
- * 3. Content Cleanup: Removed all markdown ** asterisks for a clean display.
- * 4. Image Path: Set to local asset /murali_hero.jpg for reliable global Vercel CDN hosting.
+ * 1. Syntax Fix: Changed HTML comment to JSX comment to resolve TS errors 1003/1382.
+ * 2. Image Path: Set to local asset /murali_hero.jpg for reliable global Vercel CDN hosting.
+ * 3. Layout: Uses py-24/py-32 and lg:h-[480px] to fix vertical stretching.
+ * 4. Content Cleanup: Removed all markdown ** asterisks for clean display.
  * 5. Contact Form: Fully functional using Formspree ID: xvgwjrzg.
  */
 
@@ -93,13 +93,11 @@ interface MuraliProfile {
 // --------------------- Profile Data (Image Path Updated) ---------------------
 const MURALI: MuraliProfile = {
   name: "Murali Dasari",
-  // Title remains as is, but we increase the font size in JSX to force single line
-  title: "AI DS · Cloud Computing · Web Technologies", 
+  title: "AI DS · Cloud Computing · Web Technologies",
   shortTitle: "AI DS · Cloud · Web",
   tagline: "Fresher — Building production-ready, data-driven applications and cloud infrastructure with measurable impact.",
-  // Increased density of the bio to fill the space better
   bio:
-    "I specialize in building high-performance, end-to-end AI/Data Science pipelines and scalable cloud-native web applications. My focus is on delivering clean, rigorously tested code and cost-efficient architecture that effectively translates raw data and models into robust, user-facing software products. As a dedicated fresher, I bring strong foundations in Python, deep expertise in cloud services (AWS/GCP), and modern full-stack development (React/Next.js) ready to contribute measurable value immediately.",
+    "I specialize in building end-to-end AI/DS pipelines and scalable cloud-native web applications. My focus is on delivering clean, tested code and cost-efficient architecture that translates raw data and models into functional, user-facing products. As a fresher, I bring strong foundations in Python, cloud services (AWS/GCP), and modern full-stack development (React/Next.js).",
   github: "https://github.com/muralidasari-dev",
   linkedin: "https://linkedin.com/in/muralidasari-",
   email: "muralidasari.dev@gmail.com",
@@ -464,23 +462,21 @@ function Hero() {
   return (
     // FIX 1: Retained fixed py-24/py-32 and applied gap-8 to reduce horizontal space
     <section id="home" className="flex items-center py-24 md:py-32">
-      {/* FIX 2: Reduced gap to gap-8 and increased text max-width for better horizontal fit */}
+      {/* FIX 2: Reduced gap from gap-10 to gap-8 and increased text max-width for better horizontal fit */}
       <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-8 items-center">
         <motion.div initial="hidden" animate="show" variants={staggerContainer}>
           <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900" style={{ fontFamily: "Poppins, Inter, sans-serif" }}>
             {MURALI.name}
-            {/* FIX 3: Increased font size for title span (md:text-5xl) to force single line wrap */
-            /* Removed unnecessary <span className="block ..."> from line to keep content inline on narrow viewports */}
-            <span className="md:inline block text-3xl md:text-5xl mt-3 text-amber-600 font-semibold whitespace-nowrap">{MURALI.title}</span>
+            <span className="block text-3xl md:text-4xl mt-3 text-amber-600 font-semibold">{MURALI.title}</span>
           </motion.h1>
           
-          {/* Increased max-w to 3xl */}
-          <motion.p variants={fadeInUp} className="text-amber-700 font-semibold italic mt-4 max-w-3xl text-xl p-3 bg-amber-50 rounded-lg border-l-4 border-amber-400">
+          {/* Increased max-w to 2xl */}
+          <motion.p variants={fadeInUp} className="text-amber-700 font-semibold italic mt-4 max-w-2xl text-xl p-3 bg-amber-50 rounded-lg border-l-4 border-amber-400">
             {MURALI.tagline}
           </motion.p>
           
-          {/* Increased max-w to 3xl */}
-          <motion.p variants={fadeInUp} className="text-gray-700 mt-6 max-w-3xl text-lg">
+          {/* Increased max-w to 2xl */}
+          <motion.p variants={fadeInUp} className="text-gray-700 mt-6 max-w-2xl text-lg">
             {MURALI.bio}
           </motion.p>
 
@@ -815,6 +811,7 @@ function AcademicBackground() {
             <h3 className="text-2xl font-bold text-amber-600 mb-4 flex items-center gap-2">
                 <Award className="w-6 h-6" /> Verified Certifications
             </h3>
+            {/* FIX 1: Changed HTML comment to valid JSX comment */}
             {/* The certification mapping loop is correct below */}
             <div className="grid sm:grid-cols-2 gap-4">
               {MURALI.certifications.map((c) => (
