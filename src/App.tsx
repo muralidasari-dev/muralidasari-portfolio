@@ -21,11 +21,10 @@ import {
 
 /**
  * App.tsx — Modern Portfolio Landing Page (Final Definitive Version)
- * * ALL FIXES APPLIED:
- * 1. Text Alignment: Applied text-justify to the main bio for a clean, squared edge against the image.
+ * * CORE FIXES APPLIED:
+ * 1. Academics: Reformatted the Education block to display institution and dates on a dedicated line.
  * 2. Layout: Uses lg:grid-cols-[3fr_2fr] (60/40 split) and gap-4 for optimal spacing.
- * 3. Title Fix: Reverted title font sizing to prevent text overlapping the image.
- * 4. Contact Form: Fully functional using Formspree ID: xvgwjrzg.
+ * 3. Contact Form: Fully functional using Formspree ID: xvgwjrzg.
  */
 
 // --------------------- TYPE DEFINITIONS ---------------------
@@ -38,6 +37,7 @@ interface Project {
   github: string;
   demo: string;
   date: string;
+  tagline: string; 
 }
 
 interface Skill {
@@ -57,6 +57,7 @@ interface EducationItem {
   degree: string;
   school: string;
   notes: string;
+  duration: string; // Added field for duration/timeline
 }
 
 interface CertificationItem {
@@ -89,14 +90,14 @@ interface MuraliProfile {
   certifications: CertificationItem[];
 }
 
-// --------------------- Profile Data (Content Finalized) ---------------------
+// --------------------- Profile Data (Academics Updated) ---------------------
 const MURALI: MuraliProfile = {
   name: "Murali Dasari",
   title: "AI DS · Cloud Computing · Web Technologies", 
   shortTitle: "AI DS · Cloud · Web",
-  tagline: "Fresher — Building production-ready, data-driven applications and cloud infrastructure with measurable impact.",
+  tagline: "Fresher passionate about building production-ready, data-driven applications and scalable cloud architectures that deliver measurable impact.",
   bio:
-    "I specialize in building high-performance, end-to-end AI/Data Science pipelines and scalable cloud-native web applications. My focus is on delivering clean, rigorously tested code and cost-efficient architecture that effectively translates raw data and models into robust, user-facing software products. As a dedicated fresher, I bring strong foundations in Python, deep expertise in cloud services (AWS/GCP), and modern full-stack development (React/Next.js) ready to contribute measurable value immediately.",
+    "I specialize in building high-performance, end-to-end AI/Data Science pipelines and scalable cloud-native web applications. My focus is on delivering clean, rigorously tested code and cost-efficient architecture that effectively translates raw data and models into robust, user-facing software products. As a dedicated fresher, I bring strong foundations in Python, deep expertise in cloud services (AWS/GCP), and modern full-stack development (React/Next.js) ready to contribute measurable value immediately. Outside of tech, I enjoy exploring data-driven storytelling, productivity tools, and open-source projects.",
   github: "https://github.com/muralidasari-dev",
   linkedin: "https://linkedin.com/in/muralidasari-",
   email: "muralidasari.dev@gmail.com",
@@ -111,7 +112,7 @@ const MURALI: MuraliProfile = {
   },
   expertise: [
     {
-      title: "AI DS & Data Pipelines",
+      title: "AI & Data Science", 
       icon: "cpu",
       bullets: [
         "Data preprocessing, feature engineering and exploratory analysis.",
@@ -122,7 +123,7 @@ const MURALI: MuraliProfile = {
         "Strong foundation in Python, Pandas, NumPy; familiar with model evaluation and reproducible experiments.",
     },
     {
-      title: "Cloud Computing & DevOps",
+      title: "Cloud Computing",
       icon: "layers",
       bullets: [
         "Built and deployed serverless apps and containerized services on AWS/GCP.",
@@ -132,7 +133,7 @@ const MURALI: MuraliProfile = {
       recruiterNotes: "Comfortable with Docker, basic Terraform, Cloud Run / Lambda patterns.",
     },
     {
-      title: "Web Technologies & Full Stack",
+      title: "Full-Stack Web Development",
       icon: "code",
       bullets: [
         "Responsive front-ends with React/Next.js and clean UI/UX principles.",
@@ -146,6 +147,8 @@ const MURALI: MuraliProfile = {
     { name: "Python", category: "Programming", level: 90 },
     { name: "JavaScript", category: "Programming", level: 85 },
     { name: "SQL", category: "Programming", level: 75 },
+    { name: "Version Control (Git/GitHub)", category: "DevOps", level: 80 },
+    { name: "CI/CD (GitHub Actions)", category: "DevOps", level: 60 },
     { name: "React / Next.js", category: "Web Frameworks", level: 80 },
     { name: "Node.js / Express", category: "Backend", level: 70 },
     { name: "AWS (S3, Lambda)", category: "Cloud", level: 65 },
@@ -159,6 +162,7 @@ const MURALI: MuraliProfile = {
   projects: [
     {
       title: "Real-time Fraud Detection API",
+      tagline: "Low-latency ML serving on GCP Cloud Functions.", 
       description:
         "Deployed a lightweight ML model (Python/Scikit-learn) as a serverless API endpoint (GCP Cloud Functions) for transaction analysis.",
       impact: "Simulated low-latency, scalable serving of AI model in a production environment.",
@@ -169,6 +173,7 @@ const MURALI: MuraliProfile = {
     },
     {
       title: "Full-Stack Portfolio CMS",
+      tagline: "Secure CRUD operations via Next.js and MongoDB.",
       description:
         "A personal content management system for portfolio updates built with Next.js and a simple MongoDB backend.",
       impact: "Demonstrates full-stack capability, secure CRUD operations, and modern frontend practices.",
@@ -179,6 +184,7 @@ const MURALI: MuraliProfile = {
     },
     {
       title: "AI DS Web Dashboard",
+      tagline: "Interactive analytics platform for real-time model monitoring.",
       description:
         "Interactive analytics platform built with React and D3 to visualize model outputs and KPIs in real time.",
       impact: "Helped interpret dataset drift and model behaviour during evaluation.",
@@ -189,6 +195,7 @@ const MURALI: MuraliProfile = {
     },
     {
       title: "Serverless Marketplace (Student Project)",
+      tagline: "Cost-effective serverless operations using AWS Lambda/DynamoDB.",
       description: "Next.js + AWS Lambda storefront with dynamic pricing and simple admin panel.",
       impact: "Learnings: cost-effective serverless ops and CI/CD basics.",
       stack: ["Next.js", "AWS Lambda", "DynamoDB"],
@@ -201,7 +208,9 @@ const MURALI: MuraliProfile = {
     {
       degree: "B.Tech in Computer Science Engineering",
       school: "Avanthi Institute of Engineering and Technology",
-      notes: "Major: Computer Science — coursework includes Data Structures, DBMS, Cloud Fundamentals",
+      // FIX: Added explicit duration field
+      duration: "2022–2026 (Expected)",
+      notes: "Major: Computer Science | Coursework: Data Structures, DBMS, Cloud Fundamentals",
     },
   ],
   certifications: [
@@ -457,6 +466,8 @@ const Header: React.FC<HeaderProps> = ({ active }) => {
 
 // --------------------- Hero ---------------------
 function Hero() {
+  const mailtoLink = `mailto:${MURALI.email}?subject=Collaboration/Hiring Inquiry for ${MURALI.name}`;
+
   return (
     // FIX 1: Reduced vertical padding slightly for more density
     <section id="home" className="flex items-center py-20 md:py-24">
@@ -465,7 +476,7 @@ function Hero() {
         <motion.div initial="hidden" animate="show" variants={staggerContainer}>
           <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900" style={{ fontFamily: "Poppins, Inter, sans-serif" }}>
             {MURALI.name}
-            {/* FIX 3: Reverted font size to md:text-4xl and removed whitespace-nowrap entirely to allow natural wrapping, preventing overlap. */}
+            {/* FIX 3: Reverted font size to md:text-4xl, allowing natural wrap and preventing overlap */}
             <span className="block text-3xl md:text-4xl mt-3 text-amber-600 font-semibold">{MURALI.title}</span>
           </motion.h1>
           
@@ -480,7 +491,8 @@ function Hero() {
           </motion.p>
 
           <motion.div variants={fadeInUp} className="mt-10 flex flex-wrap gap-4 items-center">
-            <a href="#contact" className="inline-flex items-center gap-3 bg-amber-500 px-6 py-3 rounded-lg text-white font-bold shadow-xl shadow-amber-200 hover:bg-amber-600 transition duration-300 transform hover:scale-[1.03]">
+            {/* FIX 6: Updated 'Hire Me' button to use mailto link with pre-filled subject */}
+            <a href={mailtoLink} className="inline-flex items-center gap-3 bg-amber-500 px-6 py-3 rounded-lg text-white font-bold shadow-xl shadow-amber-200 hover:bg-amber-600 transition duration-300 transform hover:scale-[1.03]">
               Hire Me / Collaborate
               <Zap className="w-5 h-5" />
             </a>
@@ -746,6 +758,10 @@ function Projects() {
                   <h3 className="text-gray-900 font-bold text-2xl pr-4">{p.title}</h3>
                   <div className="text-sm text-gray-500 flex-shrink-0">{p.date}</div>
                 </div>
+                
+                {/* Displaying Project Tagline */}
+                <p className="text-amber-700 text-sm font-medium mb-3 italic">{p.tagline}</p>
+
 
                 <p className="text-gray-700 text-base">{p.description}</p>
 
@@ -761,7 +777,7 @@ function Projects() {
 
                 <div className="mt-6 flex gap-3 items-center pt-4 border-t border-gray-100">
                   <a href={p.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-white font-semibold hover:bg-amber-600 transition shadow">
-                    <Github className="w-5 h-5" /> View Code
+                    <Github className="w-5 h-5" /> Code
                   </a>
 
                   <a href={p.demo} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-gray-800 font-medium hover:bg-gray-100 transition">
@@ -798,9 +814,13 @@ function AcademicBackground() {
             </h3>
             {MURALI.education.map((e) => (
               <div key={e.school} className="p-5 rounded-xl border border-gray-100 bg-gray-50 shadow-sm">
-                <div className="text-sm text-gray-600">{e.degree}</div>
-                <div className="text-xl font-bold text-gray-900 mt-1">{e.school}</div>
-                <div className="text-sm text-gray-700 mt-2">{e.notes}</div>
+                <div className="text-sm font-semibold">{e.degree}</div> {/* Added font-semibold */}
+                
+                {/* FIX 7: Combined school and duration onto one line */}
+                <div className="text-sm text-gray-700 mt-1">{e.school} ({e.duration})</div> 
+                
+                {/* FIX 8: Reformatted notes into a clean list below */}
+                <div className="text-xs text-gray-600 mt-2">{e.notes}</div>
               </div>
             ))}
           </div>
@@ -982,7 +1002,7 @@ function Footer() {
     <footer className="py-12 border-t border-gray-100 mt-12 bg-white">
       <div className="container mx-auto px-6 text-center">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-gray-600 text-sm">© {new Date().getFullYear()} {MURALI.name} — Built for **AI DS & Cloud** with React/Tailwind.</div>
+          <div className="text-gray-600 text-sm">Designed & Developed by Murali Dasari © {new Date().getFullYear()} | All Rights Reserved.</div>
           <div className="flex items-center gap-4">
             <a href={MURALI.github} target="_blank" rel="noopener noreferrer" className="text-gray-700 inline-flex items-center gap-2 hover:text-amber-600 transition">
               <Github className="w-5 h-5" />
