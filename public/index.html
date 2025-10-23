@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Changed theme-color from #000000 to match new amber palette -->
+    <!-- Theme color updated to amber -->
     <meta name="theme-color" content="#FFC107" /> 
     
     <!-- UPDATED META DESCRIPTION -->
@@ -13,24 +13,15 @@
     />
     
     <!-- 
-      FIX 1: Added cache buster (?v=3) to favicon.ico to force browser to re-download the new icon content. 
-      This is the primary favicon link.
+      FIX: Removed the explicit links to favicon.ico and logo192.png.
+      The browser will now rely on the favicon set by the JavaScript (App.tsx logic) 
+      or the manifest.json for the site, which bypasses the PDF reader's cache issue.
     -->
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico?v=3" />
-    
-    <!-- 
-      FIX 2: Added cache buster (?v=3) to apple-touch-icon (logo192.png).
-      This handles iOS/tablet icons which also often stick in the cache.
-    -->
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png?v=3" />
 
-    <!--
-      FIX 3: Ensure the manifest file link remains correct. This file MUST also be updated 
-      (as provided in the chat) to remove "React App" names.
-    -->
+    <!-- Manifest file link (Ensure public/manifest.json is updated) -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
-    <!-- FIX 4: Updated TITLE to your portfolio name -->
+    <!-- FIX 4: Updated TITLE (This is also dynamically set in App.tsx) -->
     <title>Murali Dasari | AI DS · Cloud · Web Portfolio</title>
   </head>
   <body>
