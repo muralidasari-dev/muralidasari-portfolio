@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
   Github,
   Linkedin,
@@ -20,11 +20,11 @@ import {
 } from "lucide-react";
 
 /**
- * App.tsx — Modern Portfolio Landing Page (Final Definitive Version)
- * * CORE FIXES APPLIED:
- * 1. Academics: Reformatted the Education block to display institution and dates on a dedicated line.
- * 2. Layout: Uses lg:grid-cols-[3fr_2fr] (60/40 split) and gap-4 for optimal spacing.
- * 3. Contact Form: Fully functional using Formspree ID: xvgwjrzg.
+ * App.tsx — Modern Portfolio Landing Page (TypeScript Final Fix)
+ * * ALL FIXES APPLIED:
+ * 1. Framer Motion Fix: Corrected easing strings to cubic-bezier arrays (e.g., [0.42, 0, 0.58, 1])
+ * to satisfy TypeScript's strict Variants typing (Error 2322).
+ * 2. Layout: Optimal responsive layout and clean alignment confirmed.
  */
 
 // --------------------- TYPE DEFINITIONS ---------------------
@@ -57,7 +57,7 @@ interface EducationItem {
   degree: string;
   school: string;
   notes: string;
-  duration: string; // Added field for duration/timeline
+  duration: string;
 }
 
 interface CertificationItem {
@@ -90,7 +90,7 @@ interface MuraliProfile {
   certifications: CertificationItem[];
 }
 
-// --------------------- Profile Data (Academics Updated) ---------------------
+// --------------------- Profile Data ---------------------
 const MURALI: MuraliProfile = {
   name: "Murali Dasari",
   title: "AI DS · Cloud Computing · Web Technologies", 
@@ -208,7 +208,6 @@ const MURALI: MuraliProfile = {
     {
       degree: "B.Tech in Computer Science Engineering",
       school: "Avanthi Institute of Engineering and Technology",
-      // FIX: Added explicit duration field
       duration: "2022–2026 (Expected)",
       notes: "Major: Computer Science | Coursework: Data Structures, DBMS, Cloud Fundamentals",
     },
@@ -222,13 +221,25 @@ const MURALI: MuraliProfile = {
   ],
 };
 
-// --------------------- Motion Variants ---------------------
+// --------------------- Motion Variants (FIXED Easing) ---------------------
 const fadeInUp = {
   hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
-const fadeIn = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.6 } } };
+
+// Variants for the animation shown in the screenshot (name reveal)
+const introTextVariants: Variants = {
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
+    // FIX 1: Replaced "easeOut" string with cubic-bezier array
+    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0.42, 0, 0.58, 1] } },
+};
+const introTitleVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    // FIX 2: Replaced "easeOut" string with cubic-bezier array
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.6, ease: [0.42, 0, 0.58, 1] } },
+};
 const staggerContainer = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
+
 
 // --------------------- Utility UI pieces ---------------------
 interface IconButtonProps {
@@ -313,10 +324,10 @@ function BrightParticleBg() {
       if (!ctx) return; 
 
       ctx.clearRect(0, 0, width, height);
-      // soft gradient background
+      // FIX: Warmer, professional off-white gradient background
       const g = ctx.createLinearGradient(0, 0, width, height);
-      g.addColorStop(0, "#fffaf6");
-      g.addColorStop(1, "#fffefc");
+      g.addColorStop(0, "#f9f6f1"); // Very light cream/off-white
+      g.addColorStop(1, "#fefcfb"); // Near white
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, width, height);
 
@@ -358,30 +369,40 @@ function BrightParticleBg() {
   return <canvas ref={ref} className="fixed inset-0 -z-20 w-full h-full pointer-events-none" aria-hidden />;
 }
 
-// --------------------- Intro Overlay (Murali Dasari) ---------------------
+// --------------------- Intro Overlay (Dynamic Reveal) ---------------------
 interface IntroOverlayProps {
   onFinish: () => void;
 }
 const IntroOverlay: React.FC<IntroOverlayProps> = ({ onFinish }) => {
   useEffect(() => {
-    const t = setTimeout(() => onFinish && onFinish(), 2200);
+    // Total animation time before fade out: 2.2s
+    const t = setTimeout(() => onFinish && onFinish(), 2500); // Increased duration slightly
     return () => clearTimeout(t);
   }, [onFinish]);
 
   return (
+    // Background is white, matching the theme, but uses Framer Motion for fade out
     <motion.div
       initial={{ opacity: 1 }}
       animate={{ opacity: 0 }}
-      transition={{ delay: 1.6, duration: 0.8 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-b from-amber-50 to-white"
+      transition={{ delay: 2.1, duration: 0.8 }} // Fade out after 2.1s
+      className="fixed inset-0 z-50 flex items-center justify-center bg-white" // Background is white
     >
-      <motion.div initial={{ scale: 0.96 }} animate={{ scale: 1 }} transition={{ duration: 0.8 }}>
-        <div className="text-center">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-amber-600 tracking-tight" style={{ fontFamily: "Poppins, Inter, sans-serif" }}>
-            Murali Dasari
-          </h1>
-          <p className="mt-4 text-lg md:text-xl text-gray-700">{MURALI.title}</p>
-        </div>
+      <motion.div initial="hidden" animate="show" className="flex flex-col items-center">
+        
+        <motion.h1 
+          variants={introTextVariants}
+          className="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-4" 
+          style={{ fontFamily: "Poppins, Inter, sans-serif" }}
+        >
+          {MURALI.name}
+        </motion.h1>
+        <motion.p 
+          variants={introTitleVariants}
+          className="text-lg md:text-xl text-amber-600 font-medium"
+        >
+          {MURALI.title}
+        </motion.p>
       </motion.div>
     </motion.div>
   );
@@ -408,7 +429,9 @@ const Header: React.FC<HeaderProps> = ({ active }) => {
     <header className="sticky top-4 z-40">
       <div className="container mx-auto px-6 py-3 flex items-center justify-between bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-gray-100">
         <a href="#home" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-amber-500/90 flex items-center justify-center text-white font-bold text-lg shadow-inner">MD</div>
+          <div className="w-10 h-10 rounded-full bg-amber-500/90 flex items-center justify-center text-white font-bold text-lg shadow-inner">
+            <div className="text-sm font-bold text-white">MD</div> {/* Reverted to MD text logo */}
+          </div>
           <div className="text-gray-900 hidden sm:block">
             <div className="font-bold text-lg">{MURALI.name.split(' ')[0]}</div>
             <div className="text-xs text-amber-600 font-medium">{MURALI.shortTitle}</div>
