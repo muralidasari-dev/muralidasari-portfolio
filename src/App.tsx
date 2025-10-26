@@ -16,7 +16,11 @@ import {
   Database,
   BookOpen,
   Award,
-  LucideIcon, 
+  LucideIcon,
+  Atom, // Added for a more "programming" feel
+  Terminal, // Added for "programming" or "devops"
+  Server, // Added for "backend" or "cloud"
+  GitBranch, // For Git
 } from "lucide-react";
 
 /**
@@ -25,6 +29,10 @@ import {
  * 1. Runtime Error: Expertise component fixed to resolve "IconComponent is not defined".
  * 2. Resume Path: Updated MURALI.resume to /Murali_Resume.pdf?v=20251024.
  * 3. Layout: Optimal responsive layout and styling confirmed.
+ * 4. SKILLS SECTION REFRESH:
+ * - Removed percentage bars from "Core Programming & Databases".
+ * - Replaced with modern, badge-like display with icons.
+ * - Ensured alphabets are correctly centered in initial circles.
  */
 
 // --------------------- TYPE DEFINITIONS ---------------------
@@ -43,7 +51,8 @@ interface Project {
 interface Skill {
   name: string;
   category: string;
-  level: number;
+  level: number; // Retained level for potential future use or sorting
+  icon?: keyof typeof iconMap; // Optional icon for a skill badge
 }
 
 interface ExpertiseItem {
@@ -145,21 +154,21 @@ const MURALI: MuraliProfile = {
     },
   ],
   skills: [
-    { name: "Python", category: "Programming", level: 90 },
-    { name: "JavaScript", category: "Programming", level: 85 },
-    { name: "SQL", category: "Programming", level: 75 },
+    { name: "Python", category: "Programming", level: 90, icon: "code" },
+    { name: "JavaScript", category: "Programming", level: 85, icon: "code" },
+    { name: "SQL", category: "Programming", level: 75, icon: "database" },
     // Focus on easily learnable/marketable Cloud/DevOps
-    { name: "Git & GitHub", category: "DevOps", level: 80 },
-    { name: "Docker", category: "DevOps", level: 70 },
-    { name: "AWS (S3, Lambda)", category: "Cloud", level: 65 },
+    { name: "Git & GitHub", category: "DevOps", level: 80, icon: "gitBranch" }, // Added GitBranch icon
+    { name: "Docker", category: "DevOps", level: 70, icon: "server" }, // Changed to server icon
+    { name: "AWS (S3, Lambda)", category: "Cloud", level: 65, icon: "layers" },
     // Focus on core Web skills
     { name: "React", category: "Web Frameworks", level: 80 },
     { name: "Tailwind CSS", category: "Web Frameworks", level: 75 },
     { name: "Node.js (Express)", category: "Backend", level: 70 },
-    { name: "MongoDB", category: "Database", level: 75 },
+    { name: "MongoDB", category: "Database", level: 75, icon: "database" }, // Explicit icon for MongoDB
     // Simplified DS stack
-    { name: "Pandas/NumPy", category: "Data Science", level: 85 },
-    { name: "Jupyter Notebook", category: "Data Science", level: 70 },
+    { name: "Pandas/NumPy", category: "Data Science", level: 85, icon: "database" },
+    { name: "Jupyter Notebook", category: "Data Science", level: 70, icon: "bookOpen" },
   ],
   projects: [
     {
@@ -694,13 +703,53 @@ function Expertise() {
 }
 
 // --------------------- Skills ---------------------
+// Centralized icon map for skills
+const iconMap = {
+  cpu: Cpu,
+  layers: Layers,
+  code: Code,
+  database: Database,
+  bookOpen: BookOpen,
+  atom: Atom,
+  terminal: Terminal,
+  server: Server,
+  gitBranch: GitBranch, // Added for Git
+};
+
+interface SkillBadgeProps {
+  name: string;
+  category: string;
+  icon?: keyof typeof iconMap;
+}
+
+const SkillBadge: React.FC<SkillBadgeProps> = ({ name, category, icon }) => {
+  const IconComponent = icon ? iconMap[icon] : undefined;
+  const initial = name.charAt(0).toUpperCase();
+
+  return (
+    <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-lg border border-amber-100 transition-all duration-200 hover:shadow-md hover:border-amber-200">
+      {IconComponent ? (
+        <div className="p-2 rounded-md bg-amber-200/50 text-amber-700 flex-shrink-0">
+          <IconComponent className="w-5 h-5" />
+        </div>
+      ) : (
+        <div className="w-9 h-9 rounded-full bg-amber-200/50 text-amber-700 flex items-center justify-center text-lg font-bold flex-shrink-0">
+          {initial}
+        </div>
+      )}
+      <div>
+        <div className="text-gray-900 font-semibold">{name}</div>
+        <div className="text-xs text-gray-600">{category}</div>
+      </div>
+    </div>
+  );
+};
+
+
 function Skills() {
-  const coreLanguages = MURALI.skills.filter((s) => s.category === "Programming").sort((a, b) => b.level - a.level);
-  const cloudDataTools = MURALI.skills.filter((s) => ["Cloud", "Data Science", "DevOps"].includes(s.category)).sort((a, b) => b.level - a.level).slice(0, 6);
-  const webStack = MURALI.skills.filter((s) => ["Web Frameworks", "Backend", "Database", "Visualization"].includes(s.category)).sort((a, b) => b.name.localeCompare(a.name));
-
-  const mongoDbSkill = MURALI.skills.find(s => s.name === 'MongoDB');
-
+  const coreLanguages = MURALI.skills.filter((s) => s.category === "Programming" || s.name === "MongoDB").sort((a, b) => b.level - a.level); // Include MongoDB in core
+  const cloudDataTools = MURALI.skills.filter((s) => ["Cloud", "Data Science", "DevOps"].includes(s.category) && s.name !== "MongoDB").sort((a, b) => b.level - a.level);
+  const webStack = MURALI.skills.filter((s) => ["Web Frameworks", "Backend"].includes(s.category)).sort((a, b) => b.name.localeCompare(a.name));
 
   return (
     <section id="skills" className="py-20">
@@ -711,34 +760,18 @@ function Skills() {
           
           <motion.div variants={fadeInUp} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-lg">
             <h4 className="text-2xl text-gray-900 font-bold mb-6">Core Programming & Databases</h4>
-            <div className="space-y-6">
+            <div className="grid gap-4"> {/* Changed to grid gap */}
               {coreLanguages.map((s) => (
-                <SkillBar key={s.name} name={s.name} level={s.level} />
+                <SkillBadge key={s.name} name={s.name} category={s.category} icon={s.icon} />
               ))}
-              {mongoDbSkill && (
-                <SkillBar name="MongoDB / SQL" level={mongoDbSkill.level} />
-              )}
             </div>
           </motion.div>
 
           <motion.div variants={fadeInUp} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-lg">
             <h4 className="text-2xl text-gray-900 font-bold mb-6">Cloud, Data Science & DevOps</h4>
-            <div className="grid gap-6">
+            <div className="grid gap-4">
               {cloudDataTools.map((s) => (
-                <div key={s.name} className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-100">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-md bg-amber-200/50 text-amber-700">
-                      {(s.category === "Cloud" || s.name.includes("AWS") || s.name.includes("GCP")) && <Layers className="w-5 h-5" />}
-                      {(s.category === "Data Science" || s.name.includes("Pandas")) && <Database className="w-5 h-5" />}
-                      {(s.category === "DevOps" || s.name.includes("Docker")) && <Code className="w-5 h-5" />}
-                    </div>
-                    <div>
-                      <div className="text-gray-900 font-semibold">{s.name}</div>
-                      <div className="text-xs text-gray-600">{s.category}</div>
-                    </div>
-                  </div>
-                  <div className="text-sm font-bold text-amber-600">{s.level}%</div>
-                </div>
+                <SkillBadge key={s.name} name={s.name} category={s.category} icon={s.icon || ((s.category === "Cloud" || s.name.includes("AWS") || s.name.includes("GCP")) ? "layers" : (s.category === "Data Science" || s.name.includes("Pandas")) ? "database" : (s.category === "DevOps" || s.name.includes("Docker")) ? "server" : undefined)} />
               ))}
             </div>
           </motion.div>
@@ -763,31 +796,6 @@ function Skills() {
   );
 }
 
-interface SkillBarProps {
-  name: string;
-  level: number;
-}
-const SkillBar: React.FC<SkillBarProps> = ({ name, level }) => {
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-1">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-amber-100 flex-shrink-0">
-            <div className="text-sm font-bold text-amber-700">{name.split(' ')[0][0]}</div>
-          </div>
-          <div className="flex-grow">
-            <div className="text-gray-900 font-semibold">{name}</div>
-            <div className="text-xs text-gray-600">Proficiency</div>
-          </div>
-        </div>
-        <div className="text-sm font-bold text-gray-700 ml-4">{level}%</div>
-      </div>
-      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-        <motion.div initial={{ width: 0 }} whileInView={{ width: `${level}%` }} transition={{ duration: 1.2, delay: 0.2 }} className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-500" />
-      </div>
-    </div>
-  );
-}
 
 // --------------------- Projects ---------------------
 function Projects() {
