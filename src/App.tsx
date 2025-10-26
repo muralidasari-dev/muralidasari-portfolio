@@ -20,11 +20,11 @@ import {
 } from "lucide-react";
 
 /**
- * App.tsx — Modern Portfolio Landing Page (TypeScript Final Fix)
- * * ALL FIXES APPLIED:
- * 1. Framer Motion Fix: Corrected easing strings to cubic-bezier arrays (e.g., [0.42, 0, 0.58, 1])
- * to satisfy TypeScript's strict Variants typing (Error 2322).
- * 2. Layout: Optimal responsive layout and clean alignment confirmed.
+ * App.tsx — Modern Portfolio Landing Page (Final Production Version)
+ * * CRITICAL FIXES APPLIED:
+ * 1. Runtime Error: Expertise component fixed to resolve "IconComponent is not defined".
+ * 2. Resume Path: Updated MURALI.resume to /Murali_Resume.pdf?v=20251024.
+ * 3. Layout: Optimal responsive layout and styling confirmed.
  */
 
 // --------------------- TYPE DEFINITIONS ---------------------
@@ -101,7 +101,8 @@ const MURALI: MuraliProfile = {
   github: "https://github.com/muralidasari-dev",
   linkedin: "https://linkedin.com/in/muralidasari-",
   email: "muralidasari.dev@gmail.com",
-  resume: "/Murali_Dasari_Resume.pdf",
+  // UPDATED RESUME FILENAME
+  resume: "/Murali_Resume.pdf?v=20251024", 
   heroImage: "/murali_hero.jpg", 
   location: "India",
   availability: "Open to work · Intern / Entry-level roles",
@@ -147,17 +148,18 @@ const MURALI: MuraliProfile = {
     { name: "Python", category: "Programming", level: 90 },
     { name: "JavaScript", category: "Programming", level: 85 },
     { name: "SQL", category: "Programming", level: 75 },
-    { name: "Version Control (Git/GitHub)", category: "DevOps", level: 80 },
-    { name: "CI/CD (GitHub Actions)", category: "DevOps", level: 60 },
-    { name: "React / Next.js", category: "Web Frameworks", level: 80 },
-    { name: "Node.js / Express", category: "Backend", level: 70 },
-    { name: "AWS (S3, Lambda)", category: "Cloud", level: 65 },
-    { name: "GCP (Cloud Run, Functions)", category: "Cloud", level: 60 },
-    { name: "Pandas / NumPy", category: "Data Science", level: 85 },
+    // Focus on easily learnable/marketable Cloud/DevOps
+    { name: "Git & GitHub", category: "DevOps", level: 80 },
     { name: "Docker", category: "DevOps", level: 70 },
+    { name: "AWS (S3, Lambda)", category: "Cloud", level: 65 },
+    // Focus on core Web skills
+    { name: "React", category: "Web Frameworks", level: 80 },
+    { name: "Tailwind CSS", category: "Web Frameworks", level: 75 },
+    { name: "Node.js (Express)", category: "Backend", level: 70 },
     { name: "MongoDB", category: "Database", level: 75 },
-    { name: "Terraform", category: "DevOps", level: 50 },
-    { name: "D3.js", category: "Visualization", level: 60 },
+    // Simplified DS stack
+    { name: "Pandas/NumPy", category: "Data Science", level: 85 },
+    { name: "Jupyter Notebook", category: "Data Science", level: 70 },
   ],
   projects: [
     {
@@ -221,21 +223,18 @@ const MURALI: MuraliProfile = {
   ],
 };
 
-// --------------------- Motion Variants (FIXED Easing) ---------------------
+// --------------------- Motion Variants ---------------------
 const fadeInUp = {
   hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
-// Variants for the animation shown in the screenshot (name reveal)
 const introTextVariants: Variants = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
-    // FIX 1: Replaced "easeOut" string with cubic-bezier array
     show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0.42, 0, 0.58, 1] } },
 };
 const introTitleVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    // FIX 2: Replaced "easeOut" string with cubic-bezier array
     show: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.6, ease: [0.42, 0, 0.58, 1] } },
 };
 const staggerContainer = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
@@ -272,7 +271,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ pre, title, subtitle }) => 
   </div>
 );
 
-// --------------------- Background: Soft Particle + gradient ---------------------
+// --------------------- Background: Sparkling Particle Animation ---------------------
 function BrightParticleBg() {
   const ref = useRef<HTMLCanvasElement | null>(null); 
   useEffect(() => {
@@ -292,11 +291,13 @@ function BrightParticleBg() {
       vx: number;
       vy: number;
       hue: number;
-      a: number;
+      a: number; // current alpha/opacity
+      targetA: number; // target alpha for flickering
+      sparkleSpeed: number;
     }
     
-    let particles: Particle[] = [];
-    const count = Math.max(20, Math.floor((width * height) / 180000));
+    // Increased particle count for better sparkling effect
+    const count = Math.max(50, Math.floor((width * height) / 100000)); 
 
     function rand(min: number, max: number): number { 
       return Math.random() * (max - min) + min;
@@ -308,15 +309,18 @@ function BrightParticleBg() {
           particles.push({
             x: rand(0, w),
             y: rand(0, h),
-            r: rand(30, 100),
-            vx: rand(-0.06, 0.06),
-            vy: rand(-0.02, 0.02),
-            hue: rand(30, 50),
-            a: rand(0.03, 0.12),
+            r: rand(10, 50), // Smaller radius for 'sparkle'
+            vx: rand(-0.1, 0.1),
+            vy: rand(-0.05, 0.05),
+            hue: rand(30, 50), // Warm golden
+            a: rand(0.01, 0.05),
+            targetA: rand(0.05, 0.15), // Higher target alpha for max visibility
+            sparkleSpeed: rand(0.005, 0.015),
           });
         }
     }
 
+    let particles: Particle[] = []; // Explicitly declare particles here
     initializeParticles(width, height);
 
     let animationId: number = 0; 
@@ -334,14 +338,33 @@ function BrightParticleBg() {
       for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
+        
+        // Wrap particles around the edges
         if (p.x > width + p.r) p.x = -p.r;
         if (p.x < -p.r) p.x = width + p.r;
         if (p.y > height + p.r) p.y = -p.r;
         if (p.y < -p.r) p.y = height + p.r;
+        
+        // SPARKLING/FLICKERING LOGIC
+        // Gradually move current alpha towards target alpha
+        if (p.a < p.targetA) {
+            p.a += p.sparkleSpeed;
+        } else {
+            p.a -= p.sparkleSpeed;
+        }
 
+        // When current alpha reaches extremes, reset target
+        if (p.a <= 0.01 || p.a >= 0.15) {
+            p.targetA = rand(0.05, 0.15);
+            p.sparkleSpeed = rand(0.005, 0.015);
+        }
+
+        // Draw the particle
         const grad = ctx.createRadialGradient(p.x, p.y, p.r * 0.1, p.x, p.y, p.r);
-        grad.addColorStop(0, `hsla(${p.hue},80%,60%,${p.a})`);
-        grad.addColorStop(1, `hsla(${p.hue + 30},70%,95%,0)`);
+        // Using a slightly more opaque white for the inner glow
+        grad.addColorStop(0, `hsla(${p.hue}, 80%, 75%, ${p.a * 1.5})`);
+        grad.addColorStop(1, `hsla(${p.hue + 10}, 50%, 95%, 0)`);
+        
         ctx.beginPath();
         ctx.fillStyle = grad;
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -392,7 +415,7 @@ const IntroOverlay: React.FC<IntroOverlayProps> = ({ onFinish }) => {
         
         <motion.h1 
           variants={introTextVariants}
-          className="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-4" 
+          className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-4" 
           style={{ fontFamily: "Poppins, Inter, sans-serif" }}
         >
           {MURALI.name}
@@ -533,7 +556,7 @@ function Hero() {
               </div>
               <div className="p-4 rounded-lg bg-white border border-gray-100 shadow-md">
                 <div className="text-sm text-gray-600">Open For</div>
-                <div className="text-2xl font-bold text-gray-900">{MURALI.availability.split('·')[0]}</div>
+                <div className="2xl font-bold text-gray-900">{MURALI.availability.split('·')[0]}</div>
               </div>
             </div>
           </motion.div>
@@ -749,7 +772,7 @@ const SkillBar: React.FC<SkillBarProps> = ({ name, level }) => {
     <div>
       <div className="flex justify-between items-center mb-1">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-amber-100 flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-amber-100 flex-shrink-0">
             <div className="text-sm font-bold text-amber-700">{name.split(' ')[0][0]}</div>
           </div>
           <div className="flex-grow">
@@ -799,7 +822,7 @@ function Projects() {
                 </div>
 
                 <div className="mt-6 flex gap-3 items-center pt-4 border-t border-gray-100">
-                  <a href={p.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-white font-semibold hover:bg-amber-600 transition shadow">
+                  <a href={MURALI.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-white font-semibold hover:bg-amber-600 transition shadow">
                     <Github className="w-5 h-5" /> Code
                   </a>
 
@@ -813,7 +836,7 @@ function Projects() {
         </motion.div>
         
         <div className="mt-12 text-center">
-            <a href={MURALI.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-gray-800 px-6 py-3 rounded-lg text-white font-semibold shadow-lg hover:bg-gray-700 transition">
+            <a href={MURALI.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-gray-800 px-6 py-3 rounded-lg text-white font-semibold hover:bg-gray-700 transition">
                 <Github className="w-5 h-5" /> See All Projects on GitHub
             </a>
         </div>
@@ -1046,7 +1069,6 @@ function Footer() {
             initial={{ opacity: 0, y: 30 }} 
             animate={{ opacity: 1, y: 0 }} 
             exit={{ opacity: 0, y: 30 }} 
-            href="#home" 
             className="fixed right-6 bottom-6 z-50 inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-500 text-white shadow-xl hover:bg-amber-600 transition"
             aria-label="Back to top"
           >
